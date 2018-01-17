@@ -5,14 +5,17 @@ import akka.pattern._
 import akka.util.Timeout
 import cats.data.EitherT
 import cats.implicits._
-import xite.engine.actors.UsersActor
+import xite.engine.actors.{UserActor, UsersActor}
 import xite.engine.model._
+import xite.engine.repository.VideoRepository
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class DefaultRecommendationService(actorSystem: ActorSystem)
-  extends RecommendationService[AsyncResult] with Validation {
+class DefaultRecommendationService(
+  actorSystem: ActorSystem,
+  videoRepository: VideoRepository[AsyncResult]
+) extends RecommendationService[AsyncResult] with Validation {
 
   import actorSystem.dispatcher
 
@@ -20,8 +23,8 @@ class DefaultRecommendationService(actorSystem: ActorSystem)
 
   private val users = actorSystem.actorOf(Props[UsersActor], "users")
 
-  private def register(user: User): AsyncResult[UserWithVideo] =
-    (users ? UsersActor.Register(user)).mapTo[Result[UserWithVideo]]
+  private def register(user: User, videoId: Video.Id): AsyncResult[UserWithVideo] =
+    (users ? UsersActor.Register(user, videoId)).mapTo[Result[UserWithVideo]]
 
   override def register(reg: Register): AsyncResult[UserWithVideo] = {
     (for {
@@ -33,9 +36,28 @@ class DefaultRecommendationService(actorSystem: ActorSystem)
           reg.gender
         )
       }
-      response <- EitherT(register(user))
+      nextVideo <- EitherT(videoRepository.nextVideo)
+      response <- EitherT(register(user, nextVideo.id))
     } yield response).value
   }
 
-  override def action(act: Action): AsyncResult[UserWithVideo] = ???
+  private def action(
+    userId: User.Id,
+    videoId: Video.Id,
+    nextVideoId: Video.Id,
+    actionId: Int
+  ): AsyncResult[UserWithVideo] =
+    (users ? UserActor.Action(
+      userId,
+      videoId,
+      nextVideoId,
+      actionId
+    )).mapTo[Result[UserWithVideo]]
+
+  override def action(a: Action): AsyncResult[UserWithVideo] = {
+    (for {
+      nextVideo <- EitherT(videoRepository.nextVideo)
+      response <- EitherT(action(a.userId, a.videoId, nextVideo.id, a.actionId))
+    } yield response).value
+  }
 }

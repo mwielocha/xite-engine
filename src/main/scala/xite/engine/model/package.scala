@@ -1,6 +1,6 @@
 package xite.engine
 
-import cats.data.{NonEmptyList, Validated}
+import cats.data.NonEmptyList
 
 import scala.concurrent.Future
 
