@@ -1,7 +1,6 @@
 package xite.engine.actors
 
 import akka.actor.{Actor, ActorLogging}
-import cats.data.NonEmptyList
 import xite.engine.model._
 
 object UserActor {
@@ -38,7 +37,7 @@ class UserActor extends Actor with ActorLogging {
             if(lastVideoId.contains(id)) {
               lastVideoId = Some(nextVideoId)
               Right(UserWithVideo(uid, nextVideoId))
-            } else Left(NonEmptyList.of("video does not correspond to last given"))
+            } else Left(Errors("video does not correspond to last given"))
 
           sender() ! response
       }
