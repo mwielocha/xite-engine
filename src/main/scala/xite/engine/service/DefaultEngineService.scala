@@ -15,7 +15,7 @@ import scala.concurrent.duration._
 class DefaultEngineService(
   actorSystem: ActorSystem,
   videoRepository: VideoRepository[Future]
-) extends EngineService[AsyncResult] with Validation {
+) extends EngineService[AsyncResult] {
 
   import actorSystem.dispatcher
 
