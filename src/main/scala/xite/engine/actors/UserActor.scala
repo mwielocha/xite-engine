@@ -13,7 +13,7 @@ object UserActor {
     actionId: Int
   )
 
-  case class StartWith(videoId: Video.Id)
+  case class StartWith(userId: User.Id, videoId: Video.Id)
 
   case object Done
 }
@@ -26,22 +26,24 @@ class UserActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
-    case StartWith(videoId) =>
+    case StartWith(userId, videoId) =>
 
       lastVideoId = Some(videoId)
 
       context.become {
 
-        case Action(_, id, nextVideoId, _) =>
+        case Action(uid, id, nextVideoId, _) =>
 
-          val response: Result[Done.type] =
+          val response: Result[UserWithVideo] =
             if(lastVideoId.contains(id)) {
               lastVideoId = Some(nextVideoId)
-              Right(Done)
+              Right(UserWithVideo(uid, nextVideoId))
             } else Left(NonEmptyList.of("video does not correspond to last given"))
 
           sender() ! response
       }
+
+      sender() ! Right(UserWithVideo(userId, videoId))
 
     case x => unhandled(x)
   }

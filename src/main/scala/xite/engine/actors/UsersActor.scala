@@ -32,7 +32,7 @@ class UsersActor extends Actor with ActorLogging {
 
       val ref = context.actorOf(Props[UserActor], s"${user.id}")
       userActors = userActors + (user.id -> ref)
-      ref ! UserActor.StartWith(videoId)
+      ref forward UserActor.StartWith(user.id, videoId)
 
     case a: UserActor.Action =>
 

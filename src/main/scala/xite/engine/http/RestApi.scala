@@ -8,7 +8,7 @@ import xite.engine.service.EngineService
 class RestApi(recommendationService: EngineService[AsyncResult])
   extends DefaultCirceSupport with DefaultCodecs {
 
-  def route: Route = pathPrefix("/") {
+  def route: Route = {
     (path("register") & post & entity(as[Register])) { register =>
       complete(recommendationService.register(register))
     } ~ (path("action") & post & entity(as[Action])) { action =>

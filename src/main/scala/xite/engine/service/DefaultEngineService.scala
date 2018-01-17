@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 
 class DefaultEngineService(
   actorSystem: ActorSystem,
-  videoRepository: VideoRepository[AsyncResult]
+  videoRepository: VideoRepository[Future]
 ) extends EngineService[AsyncResult] with Validation {
 
   import actorSystem.dispatcher
@@ -36,7 +36,7 @@ class DefaultEngineService(
           reg.gender
         )
       }
-      nextVideo <- EitherT(videoRepository.nextVideo)
+      nextVideo <- EitherT.liftF(videoRepository.nextVideo)
       response <- EitherT(register(user, nextVideo.id))
     } yield response).value
   }
@@ -56,7 +56,7 @@ class DefaultEngineService(
 
   override def action(a: Action): AsyncResult[UserWithVideo] = {
     (for {
-      nextVideo <- EitherT(videoRepository.nextVideo)
+      nextVideo <- EitherT.liftF(videoRepository.nextVideo)
       response <- EitherT(action(a.userId, a.videoId, nextVideo.id, a.actionId))
     } yield response).value
   }
