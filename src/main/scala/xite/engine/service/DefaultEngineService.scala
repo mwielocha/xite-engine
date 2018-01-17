@@ -12,10 +12,10 @@ import xite.engine.repository.VideoRepository
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class DefaultRecommendationService(
+class DefaultEngineService(
   actorSystem: ActorSystem,
   videoRepository: VideoRepository[AsyncResult]
-) extends RecommendationService[AsyncResult] with Validation {
+) extends EngineService[AsyncResult] with Validation {
 
   import actorSystem.dispatcher
 
