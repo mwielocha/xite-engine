@@ -46,7 +46,7 @@ class UserActor extends Actor with ActorLogging {
 
   import UserActor._
 
-  private var state: Option[UserState] = None
+  var state: Option[UserState] = None
 
   private def response(userId: User.Id): Result[UserWithVideo] = {
     state match {
