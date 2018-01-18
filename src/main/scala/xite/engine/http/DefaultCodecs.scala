@@ -18,10 +18,23 @@ trait DefaultCodecs extends TimeInstances {
       )
   }
 
+  implicit val errorsDecoder: Decoder[Errors] = {
+    cursor =>
+      for {
+        errors <- cursor
+          .downField("errors")
+          .as[Seq[String]]
+      } yield Errors(errors.head, errors.tail: _*)
+  }
+
   implicit val userWithVideoEncoder: Encoder[UserWithVideo] = deriveEncoder[UserWithVideo]
+  implicit val userWithVideoDecoder: Decoder[UserWithVideo] = deriveDecoder[UserWithVideo]
 
   implicit val actionDecoder: Decoder[Action] = deriveDecoder[Action]
+  implicit val actionEncoder: Encoder[Action] = deriveEncoder[Action]
+
   implicit val registerDecoder: Decoder[Register] = deriveDecoder[Register]
+  implicit val registerEncoder: Encoder[Register] = deriveEncoder[Register]
 
   implicit def `@@LongDecoder`[T]: Decoder[Long @@ T] = {
     Decoder.decodeLong.map(x => tag[T](x))
