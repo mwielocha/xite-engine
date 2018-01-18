@@ -4,6 +4,6 @@ import xite.engine.model.Video
 
 trait VideoRepository[F[_]] {
 
-  def nextVideo: F[Video]
+  def getAll: F[Seq[Video]]
 
 }

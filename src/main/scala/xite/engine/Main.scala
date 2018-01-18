@@ -4,14 +4,14 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import xite.engine.http.RestApi
-import xite.engine.repository.DefaultVideoRepository
+import xite.engine.repository.InMemoryVideoRepository
 import xite.engine.service.DefaultEngineService
 
 object Main extends App {
 
   implicit val actorSystem: ActorSystem = ActorSystem()
 
-  val videoRepository = new DefaultVideoRepository
+  val videoRepository = new InMemoryVideoRepository
 
   val engineService = new DefaultEngineService(actorSystem, videoRepository)
 

@@ -16,7 +16,7 @@ object Video {
     def apply(): Video.Id = Id(nextId.incrementAndGet())
   }
 
-  def apply(): Video = Video(Id(), 0L)
+  def apply(): Video = Video(Id())
 }
 
-case class Video(id: Video.Id, views: Long)
+case class Video(id: Video.Id)

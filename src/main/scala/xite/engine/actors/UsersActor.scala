@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 
 object UsersActor {
 
-  case class Register(user: User, videoId: Video.Id)
+  case class Register(user: User, videos: Seq[Video])
 }
 
 class UsersActor extends Actor with ActorLogging {

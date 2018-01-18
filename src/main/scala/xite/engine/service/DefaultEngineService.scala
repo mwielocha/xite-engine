@@ -23,8 +23,8 @@ class DefaultEngineService(
 
   private val users = actorSystem.actorOf(Props[UsersActor], "users")
 
-  private def register(user: User, videoId: Video.Id): AsyncResult[UserWithVideo] =
-    (users ? UsersActor.Register(user, videoId)).mapTo[Result[UserWithVideo]]
+  private def register(user: User, videos: Seq[Video]): AsyncResult[UserWithVideo] =
+    (users ? UsersActor.Register(user, videos)).mapTo[Result[UserWithVideo]]
 
   override def register(reg: Register): AsyncResult[UserWithVideo] = {
     (for {
@@ -36,28 +36,15 @@ class DefaultEngineService(
           reg.gender
         )
       }
-      nextVideo <- EitherT.liftF(videoRepository.nextVideo)
-      response <- EitherT(register(user, nextVideo.id))
+      videos <- EitherT.liftF(videoRepository.getAll)
+      response <- EitherT(register(user, videos))
     } yield response).value
   }
 
-  private def action(
-    userId: User.Id,
-    videoId: Video.Id,
-    nextVideoId: Video.Id,
-    actionId: Int
-  ): AsyncResult[UserWithVideo] =
+  override def action(a: Action): AsyncResult[UserWithVideo] =
     (users ? UserActor.Action(
-      userId,
-      videoId,
-      nextVideoId,
-      actionId
+      a.userId,
+      a.videoId,
+      a.actionId
     )).mapTo[Result[UserWithVideo]]
-
-  override def action(a: Action): AsyncResult[UserWithVideo] = {
-    (for {
-      nextVideo <- EitherT.liftF(videoRepository.nextVideo)
-      response <- EitherT(action(a.userId, a.videoId, nextVideo.id, a.actionId))
-    } yield response).value
-  }
 }
