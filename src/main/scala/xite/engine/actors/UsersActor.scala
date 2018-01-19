@@ -1,7 +1,7 @@
 package xite.engine.actors
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import cats.data.{EitherT, NonEmptyList}
+import cats.data.EitherT
 import xite.engine.model._
 
 import scala.concurrent.Future
@@ -24,7 +24,7 @@ class UsersActor extends Actor with ActorLogging {
 
   private implicit val timeout: Timeout = Timeout(200 millis)
 
-  private var userActors = Map.empty[User.Id, ActorRef]
+  private [actors] var userActors = Map.empty[User.Id, ActorRef]
 
   override def receive: Receive = {
 
@@ -39,7 +39,7 @@ class UsersActor extends Actor with ActorLogging {
       val response = (for {
         ref <- EitherT.fromOption[Future](
           userActors.get(a.userId),
-          NonEmptyList.of("userId does not exist")
+          Errors("userId does not exist")
         )
         response <- EitherT((ref ? a)
           .mapTo[Result[UserWithVideo]])
