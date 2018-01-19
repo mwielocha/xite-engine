@@ -17,8 +17,8 @@ class Application {
 
   val userState = new AkkaUserState(actorSystem)
 
-  val engineService = new EngineInterpreter[Future](userState, videoRepository)
+  val engine = new EngineInterpreter[Future](userState, videoRepository)
 
-  val restApi = new RestApi(engineService)
+  val restApi = new RestApi(engine)
 
 }

@@ -7,14 +7,14 @@ import xite.engine.service.EngineAlgebra
 
 import scala.concurrent.Future
 
-class RestApi(recommendationService: EngineAlgebra[Future])
+class RestApi(engine: EngineAlgebra[Future])
   extends DefaultCirceSupport with DefaultCodecs {
 
   def route: Route = {
     (path("register") & post & entity(as[Register])) { register =>
-      complete(recommendationService.register(register))
+      complete(engine.register(register))
     } ~ (path("action") & post & entity(as[Action])) { action =>
-      complete(recommendationService.action(action))
+      complete(engine.action(action))
     }
   }
 }
