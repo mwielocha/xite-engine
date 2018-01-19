@@ -6,10 +6,10 @@ import xite.engine.actors.UserActor
 import xite.engine.model._
 import xite.engine.repository.VideoRepository
 
-case class EngineInterpreter[F[_]](
+case class EngineInterpreter[F[_]: Monad](
   userState: UserState[F],
   videoRepository: VideoRepository[F]
-)(implicit mt: Monad[F]) extends EngineAlgebra[F] with Validation {
+) extends EngineAlgebra[F] with Validation {
 
   override def action(a: Action): F[Result[UserWithVideo]] = {
     (for {
