@@ -1,11 +1,13 @@
 package xite.engine.http
 
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{Route, _}
-import xite.engine.model.{Action, AsyncResult, Register}
-import xite.engine.service.EngineService
+import akka.http.scaladsl.server.Route
+import xite.engine.model.{Action, Register}
+import xite.engine.service.EngineAlgebra
 
-class RestApi(recommendationService: EngineService[AsyncResult])
+import scala.concurrent.Future
+
+class RestApi(recommendationService: EngineAlgebra[Future])
   extends DefaultCirceSupport with DefaultCodecs {
 
   def route: Route = {

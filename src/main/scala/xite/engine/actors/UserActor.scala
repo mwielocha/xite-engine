@@ -1,7 +1,9 @@
 package xite.engine.actors
 
 import akka.actor.{Actor, ActorLogging}
+import cats.data.Validated.Valid
 import xite.engine.model._
+import cats.implicits._
 
 object UserActor {
 
@@ -10,6 +12,23 @@ object UserActor {
     videoId: Video.Id,
     actionId: Int
   )
+
+  object Action extends Validation {
+
+    private val actions = Set(1, 2, 3)
+
+    def validated(
+      userId: User.Id,
+      videoId: Video.Id,
+      actionId: Int
+    ): Result[Action] = {
+      (
+        Valid(userId),
+        Valid(videoId),
+        check(actionId)(actions, "actionId is not valid")
+      ).mapN(Action.apply).toEither
+    }
+  }
 
   case class StartWith(userId: User.Id, videos: Seq[Video])
 

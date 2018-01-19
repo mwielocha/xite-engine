@@ -51,6 +51,25 @@ class RestApiSpec extends WordSpec with Matchers
       }
     }
 
+    "validate action id" in {
+
+      val registerRequest = Register("John", "john@email.com", 22, 1)
+
+      val UserWithVideo(_, videoId) = {
+        Post("/register", marshal(registerRequest)) ~> app.restApi.route ~> check {
+          response.status.intValue() shouldBe 200
+          entityAs[UserWithVideo]
+        }
+      }
+
+      val actionRequest = Action(User.Id(-1), videoId, 5)
+
+      Post("/action", marshal(actionRequest)) ~> app.restApi.route ~> check {
+        response.status.intValue() shouldBe 400
+        entityAs[Errors] shouldBe Errors("actionId is not valid")
+      }
+    }
+
     "fail if user doesn't exist" in {
 
       val registerRequest = Register("John", "john@email.com", 22, 1)
