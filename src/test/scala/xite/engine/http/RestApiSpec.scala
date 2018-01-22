@@ -89,7 +89,7 @@ class RestApiSpec extends WordSpec with Matchers
       }
     }
 
-    "fail if last video is different" in {
+    "fail if last video is different than provided" in {
 
       val registerRequest = Register("John", "john@email.com", 22, 1)
 
@@ -108,7 +108,7 @@ class RestApiSpec extends WordSpec with Matchers
       }
     }
 
-    "perform and action" in {
+    "perform and action and return a correct action response" in {
 
       val registerRequest = Register("John", "john@email.com", 22, 1)
 

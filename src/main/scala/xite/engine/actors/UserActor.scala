@@ -61,6 +61,10 @@ object UserActor {
   }
 }
 
+// According to the spec the next video suggestion should be the one that is least watched
+// which obvioulsy produces same queue of videos for each new member, its odd but I assume this
+// is because its just an example project
+
 class UserActor extends Actor with ActorLogging {
 
   import UserActor._

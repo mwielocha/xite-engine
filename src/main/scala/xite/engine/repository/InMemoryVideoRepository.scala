@@ -7,6 +7,8 @@ import scala.util.Random
 
 class InMemoryVideoRepository extends VideoRepository[Future] {
 
+  // to simulate persistance
+
   private val videos: Seq[Video] = Random.shuffle(
     (1000 to 5000)
       .map(_ => Video())

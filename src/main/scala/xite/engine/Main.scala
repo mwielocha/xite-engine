@@ -5,6 +5,8 @@ import akka.stream.ActorMaterializer
 
 object Main extends App {
 
+  // simple boostrap
+
   val app = new Application
 
   import app.actorSystem

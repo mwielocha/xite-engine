@@ -29,7 +29,7 @@ class UserActorSpec extends TestKit(ActorSystem()) with WordSpecLike with Matche
       )
     }
 
-    "update state on first action" in {
+    "reorder the video queue on first action" in {
       val userActor = TestActorRef[UserActor]
       userActor ! StartWith(userId, videos)
       userActor ! Action(userId, videos.head.id, 1)
@@ -45,7 +45,7 @@ class UserActorSpec extends TestKit(ActorSystem()) with WordSpecLike with Matche
       )
     }
 
-    "update state on second action" in {
+    "reorder the video queue on second action" in {
       val userActor = TestActorRef[UserActor]
       userActor ! StartWith(userId, videos)
       userActor ! Action(userId, videos.head.id, 1)
@@ -62,7 +62,7 @@ class UserActorSpec extends TestKit(ActorSystem()) with WordSpecLike with Matche
       )
     }
 
-    "update state on third action" in {
+    "reorder the video queue on third action" in {
       val userActor = TestActorRef[UserActor]
       userActor ! StartWith(userId, videos)
       userActor ! Action(userId, videos.head.id, 1)
